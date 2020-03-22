@@ -34,7 +34,7 @@ readline.question(`Please provide the FaunaDB admin key\n`, adminKey => {
         return readline.close()
       } else if (readableResult.includes('success')) {
         console.log('1. Successfully imported schema')
-        return readline.close()
+        // return readline.close()
       }
     })
     .catch(err => {

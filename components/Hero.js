@@ -107,7 +107,7 @@ export default props => {
           entries.map((entry, index, allEntries) => {
             const date = new Date(entry._ts / 1000)
             return (
-              <div key={entry._id}>
+              <div key={entry._id} id={entry._id}>
                 <GuestbookEntry
                   twitter_handle={entry.twitter_handle}
                   story={entry.story}

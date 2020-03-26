@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import cookie, { serialize } from 'cookie'
 import Head from 'next/head'
 import Footer from '../components/Footer'
 import Hero from '../components/Hero'
@@ -39,6 +40,9 @@ const Guestbook = props => {
       `}</style>
       <div>
         <Hero />
+        <div>
+          {props.user}
+        </div>
         <Footer />
       </div>
       <style jsx>{`
@@ -53,6 +57,25 @@ const Guestbook = props => {
       `}</style>
     </>
   )
+}
+
+Guestbook.getInitialProps = async ctx => {
+  if (typeof window === 'undefined') {
+    let user = 'first time user'
+    const { req, res } = ctx;
+    const cookies = cookie.parse(req.headers.cookie ?? '');
+
+    if(!cookies.user) {  
+      res.setHeader('Set-Cookie', serialize('user', 'next time its me'));
+    } else {
+      res.setHeader('Set-Cookie', serialize('user', '', { expires: new Date(0)}));
+      user = cookies.user
+    }
+    
+    return {
+      user: user
+    }
+  }
 }
 
 export default Guestbook

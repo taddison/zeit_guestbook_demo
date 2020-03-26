@@ -4,6 +4,8 @@ import Head from 'next/head'
 import Footer from '../components/Footer'
 import Hero from '../components/Hero'
 
+let nextSessionId = 1;
+
 const Guestbook = props => {
   useEffect(() => {
     // not for prod!
@@ -41,7 +43,7 @@ const Guestbook = props => {
       <div>
         <Hero />
         <div>
-          {props.user}
+          SessionId: {props.sessionId}
         </div>
         <Footer />
       </div>
@@ -59,21 +61,26 @@ const Guestbook = props => {
   )
 }
 
+const SESSION_COOKIE_NAME = 'zgd_sid';
+
 Guestbook.getInitialProps = async ctx => {
   if (typeof window === 'undefined') {
-    let user = 'first time user'
     const { req, res } = ctx;
     const cookies = cookie.parse(req.headers.cookie ?? '');
-
-    if(!cookies.user) {  
-      res.setHeader('Set-Cookie', serialize('user', 'next time its me'));
+    
+    let sessionId = cookies[SESSION_COOKIE_NAME];
+    if(!sessionId) {
+      // If not set, assign the next sessionId
+      sessionId = nextSessionId++;
+      res.setHeader('Set-Cookie', serialize(SESSION_COOKIE_NAME, sessionId));
     } else {
-      res.setHeader('Set-Cookie', serialize('user', '', { expires: new Date(0)}));
-      user = cookies.user
+      // Otherwise delete it
+      res.setHeader('Set-Cookie', serialize(SESSION_COOKIE_NAME, '', { expires: new Date(0)}));
+      sessionId = "session deleted"
     }
     
     return {
-      user: user
+      sessionId
     }
   }
 }

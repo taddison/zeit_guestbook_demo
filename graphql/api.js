@@ -1,4 +1,13 @@
 import useFetch from '../lib/useFetch'
+// import fetch from 'fetch'
+
+const getHeaders = () => {
+  return {
+    Authorization: `Bearer ${process.env.faunaDbSecret}`,
+    'Content-type': 'application/json',
+    Accept: 'application/json',
+  }
+}
 
 function getData(data) {
   if (!data || data.errors) return null
@@ -37,11 +46,7 @@ export const useGuestbookEntries = () => {
   const size = 100
   const { data, error } = useFetch(process.env.faunaDbGraphQlEndpoint, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.faunaDbSecret}`,
-      'Content-type': 'application/json',
-      Accept: 'application/json',
-    },
+    headers: getHeaders(),
     body: JSON.stringify({
       query,
       variables: { size },
@@ -85,11 +90,7 @@ export const createGuestbookEntry = async (twitterHandle, story) => {
 
   const res = await fetch(process.env.faunaDbGraphQlEndpoint, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.faunaDbSecret}`,
-      'Content-type': 'application/json',
-      Accept: 'application/json',
-    },
+    headers: getHeaders(),
     body: JSON.stringify({
       query,
       variables: { twitterHandle, story },
@@ -98,4 +99,29 @@ export const createGuestbookEntry = async (twitterHandle, story) => {
   const data = await res.json()
 
   return data
+}
+
+export const createSession = async (sessionId) => {
+  const query = `mutation CreateSession($sessionId:Int!) {
+    createSession(data: {
+      sessionId: $sessionId
+    }) {
+      _id
+      _ts
+      sessionId
+    }
+  }`;
+
+  const res = await fetch(process.env.faunaDbGraphQlEndpoint, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({
+      query,
+      variables: { sessionId },
+    }),
+  });
+
+  const data = await res.json();
+
+  return data;
 }

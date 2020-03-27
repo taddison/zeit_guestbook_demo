@@ -9,6 +9,7 @@
     "setup": "node ./scripts/setup.js"
   },
   "dependencies": {
+    "fetch": "^1.1.0",
     "next": "latest",
     "react": "^16.10.2",
     "react-dom": "^16.10.2"

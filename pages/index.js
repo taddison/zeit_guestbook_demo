@@ -3,6 +3,7 @@ import cookie, { serialize } from 'cookie'
 import Head from 'next/head'
 import Footer from '../components/Footer'
 import Hero from '../components/Hero'
+import { createSession } from "../graphql/api";
 
 let nextSessionId = 1;
 
@@ -72,6 +73,7 @@ Guestbook.getInitialProps = async ctx => {
     if(!sessionId) {
       // If not set, assign the next sessionId
       sessionId = nextSessionId++;
+      // await createSession(sessionId);
       res.setHeader('Set-Cookie', serialize(SESSION_COOKIE_NAME, sessionId));
     } else {
       // Otherwise delete it
